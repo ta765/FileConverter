@@ -37,7 +37,7 @@ export async function sentencecase(
     }
     // Safety limit for classroom demo
     if (text.length > 200_000) {
-      return { status: 413, jsonBody: { error: "Text too large for this demo." } };
+      return { status: 413, jsonBody: { error: "Text too large for the demo." } };
     }
     const result = toSentenceCase(text);
     return { status: 200, jsonBody: { result } };
