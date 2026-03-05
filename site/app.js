@@ -59,13 +59,13 @@ if (fileInput && btnFormat && btnCopy && formatStatusEl && outputEl) {
   btnFormat.addEventListener("click", async () => {
     if (!selectedFile) return;
     btnFormat.disabled = true;
-    formatStatusEl.textContent = "Sending text to the API...";
+    formatStatusEl.textContent = "Sending to formatter API...";
     try {
       const text = await selectedFile.text();
-      const res = await fetch(`${FUNCTION_BASE_URL}/api/sentencecase`, {
+      const res = await fetch(`${FUNCTION_BASE_URL}/api/format`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text })
+        body: JSON.stringify({ text, filename: selectedFile.name })
       });
       if (!res.ok) {
         const errText = await res.text();
@@ -74,7 +74,11 @@ if (fileInput && btnFormat && btnCopy && formatStatusEl && outputEl) {
       const data = await res.json();
       outputEl.value = data.result ?? "";
       btnCopy.disabled = outputEl.value.length === 0;
+      if(data.action){
+        formatStatusEl.textContent = `Formatted using: ${data.action}`;
+      } else {
       formatStatusEl.textContent = "Done.";
+      }
     } catch (err) {
       formatStatusEl.textContent = `Failed: ${err.message}`;
     } finally {
