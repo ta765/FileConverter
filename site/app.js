@@ -18,7 +18,7 @@ btn.addEventListener("click", async () => {
 
   try { 
 
-    const res = await fetch(`${FUNCTION_BASE_URL}/api/quote`); 
+    const res = await fetch(`${FUNCTION_BASE_URL}/api/convert`); 
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`); 
 
