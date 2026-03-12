@@ -2,11 +2,6 @@ const FUNCTION_BASE_URL = "https://converter765-b3d2cgaeghc8gkev.francecentral-0
 const btn = document.getElementById("btn");
 const quoteEl = document.getElementById("quote");
 const statusEl = document.getElementById("status");
-const fileInput = document.getElementById("fileInput");
-const btnFormat = document.getElementById("btnFormat");
-const btnCopy = document.getElementById("btnCopy");
-const outputEl = document.getElementById("output");
-const formatStatusEl = document.getElementById("formatStatus");
 
 btn.addEventListener("click", async () => {
   statusEl.textContent = "Fetching...";
@@ -25,22 +20,28 @@ btn.addEventListener("click", async () => {
   }
 });
 
+const fileInput = document.getElementById("fileInput");
+const btnFormat = document.getElementById("btnFormat");
+const btnDownload = document.getElementById("btnDownload");
+const formatStatusEl = document.getElementById("formatStatus");
+const outputEl = document.getElementById("output");
+
 let selectedFile = null;
-if (fileInput && btnFormat && btnCopy && formatStatusEl && outputEl) {
+let downloadedFilename = "formatted.txt";
+if (fileInput && btnFormat && btnDownload && formatStatusEl && outputEl) {
   fileInput.addEventListener("change", () => {
     selectedFile = fileInput.files?.[0] ?? null;
     outputEl.value = "";
-    btnCopy.disabled = true;
+    btnDownload.disabled = true;
     if (!selectedFile) {
       btnFormat.disabled = true;
       formatStatusEl.textContent = "";
       return;
     }
-    // Basic validation
     const nameOk = selectedFile.name.toLowerCase().endsWith(".txt");
     const typeOk = (selectedFile.type || "").startsWith("text/");
     const isText = nameOk || typeOk;
-    const maxBytes = 200 * 1024; // 200KB for a demo
+    const maxBytes = 200 * 1024;
     if (!isText) {
       btnFormat.disabled = true;
       formatStatusEl.textContent = "Please select a plain text (.txt) file.";
@@ -56,38 +57,50 @@ if (fileInput && btnFormat && btnCopy && formatStatusEl && outputEl) {
     btnFormat.disabled = false;
     formatStatusEl.textContent = `Selected: ${selectedFile.name} (${selectedFile.size} bytes)`;
   });
-  btnFormat.addEventListener("click", async () => {
-    if (!selectedFile) return;
-    btnFormat.disabled = true;
-    formatStatusEl.textContent = "Sending to formatter API...";
-    try {
-      const text = await selectedFile.text();
-      const res = await fetch(`${FUNCTION_BASE_URL}/api/format`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, filename: selectedFile.name })
-      });
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error(`API error (${res.status}): ${errText}`);
-      }
-      const data = await res.json();
-      outputEl.value = data.result ?? "";
-      btnCopy.disabled = outputEl.value.length === 0;
-      if(data.action){
-        formatStatusEl.textContent = `Formatted using: ${data.action}`;
-      } else {
-      formatStatusEl.textContent = "Done.";
-      }
-    } catch (err) {
+
+btnFormat.addEventListener("click", async () => {
+  if (!selectedFile) return;
+  btnFormat.disabled = true;
+  btnDownload.disabled = true;
+  formatStatusEl.textContent = "Sending text to the API...";
+  try {
+    const text = await selectedFile.text();
+    const res = await fetch(`${FUNCTION_BASE_URL}/api/format`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      filename: selectedFile.name,
+      text
+    })
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`API error (${res.status}): ${errText}`);
+    }
+    const data = await res.json();
+    outputEl.value = data.result ?? "";
+    downloadedFilename = data.outputFilename ?? "formatted.txt";
+    btnDownload.disabled = outputEl.value.length === 0;
+    formatStatusEl.textContent = `Done. Route used: ${data.action}. You can now download the formatted file.`;
+  } catch (err) {
+      outputEl.value = "";
+      btnDownload.disabled = true;
       formatStatusEl.textContent = `Failed: ${err.message}`;
     } finally {
-      btnFormat.disabled = !selectedFile;
-    }
+        btnFormat.disabled = !selectedFile;
+      }
   });
-
-  btnCopy.addEventListener("click", async () => {
-    await navigator.clipboard.writeText(outputEl.value);
-    formatStatusEl.textContent = "Copied output to clipboard.";
+  btnDownload.addEventListener("click", () => {
+    const blob = new Blob([outputEl.value], {
+    type: "text/plain;charset=utf-8"
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = downloadedFilename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
   });
 }
