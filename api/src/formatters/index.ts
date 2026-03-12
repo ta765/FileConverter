@@ -6,6 +6,6 @@ import { sentencecase } from "./sentencecase";
 
 export const FORMATTERS: Record<FormatterAction, FormatterFn>
 = {
-    uppercase: uppercase,
-sentencecase
+    uppercase,
+    sentencecase
 };
