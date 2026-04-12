@@ -31,15 +31,10 @@
   <h1>File Converter</h1>
 
   <section class="card">
-    <h2>Text Formatter (Filename Router)</h2>
+    <h2>File Converter</h2>
 
-    <p class="muted">
-        Name your file like <strong>notes_uppercase.txt</strong> or
-        <strong>notes_sentencecase.txt</strong>.
-    </p>
-
-    <label for="fileInput">Upload a .txt file</label><br />
-    <input id="fileInput" type="file" accept=".txt,text/plain" />
+    <label for="fileInput">Upload a file</label><br />
+    <input id="fileInput" type="file" accept=".txt,text/plain,.xml" />
 
     <div style="margin-top: 12px;">
         <button id="btnFormat" disabled>Format</button>
@@ -52,9 +47,6 @@
     <textarea id="output" rows="10" style="width: 100%;" readonly></textarea>
 </section>
 
-
-
   <script src="app.js"></script>
 </body>
-
 </html>

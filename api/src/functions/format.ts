@@ -9,14 +9,15 @@ type Body = {
 
 function detectAction(filename: string): FormatterAction | null {
   const lower = filename.toLowerCase();
+  if (lower.endsWith(".xml")) return "xml2json";
   if (lower.includes("_uppercase.txt")) return "uppercase";
   if (lower.includes("_sentencecase.txt")) return "sentencecase";
   return null;
 }
 
-function buildOutputFilename(filename: string): string {
-  if (!filename.toLowerCase().endsWith(".txt")) {
-    return `${filename}_formatted.txt`;
+function buildOutputFilename(filename: string, action: FormatterAction): string {
+  if (action === "xml2json") {
+    return filename.replace(/\.xml$/i, ".json");
   }
 
   return filename.replace(/\.txt$/i, "_formatted.txt");
@@ -32,15 +33,10 @@ async function uploadTextBlob(
   text: string
 ): Promise<void> {
   const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-
+  
   await blockBlobClient.upload(
     Buffer.from(text, "utf8"),
-    Buffer.byteLength(text, "utf8"),
-    {
-      blobHTTPHeaders: {
-        blobContentType: "text/plain; charset=utf-8"
-      }
-    }
+    Buffer.byteLength(text, "utf8")
   );
 }
 
@@ -96,7 +92,7 @@ export async function format(
     }
 
     const result = formatter(text);
-    const outputFilename = buildOutputFilename(filename);
+    const outputFilename = buildOutputFilename(filename, action);
 
     const storageConnection = process.env.FILES_STORAGE;
     const containerName = process.env.FILES_CONTAINER || "files";

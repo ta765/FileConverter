@@ -21,14 +21,13 @@ if (fileInput && btnFormat && btnDownload && formatStatusEl && outputEl) {
       return;
     }
 
-    const nameOk = selectedFile.name.toLowerCase().endsWith(".txt");
-    const typeOk = (selectedFile.type || "").startsWith("text/");
-    const isText = nameOk || typeOk;
+    const nameOk = selectedFile.name.toLowerCase();
+    const typeOk = nameOk.endsWith(".txt") || nameOk.endsWith(".xml");
     const maxBytes = 200 * 1024;
 
-    if (!isText) {
+    if (!typeOk) {
       btnFormat.disabled = true;
-      formatStatusEl.textContent = "Please select a plain text (.txt) file.";
+      formatStatusEl.textContent = "Please select a plain text or .xml file.";
       selectedFile = null;
       return;
     }
@@ -70,9 +69,9 @@ if (fileInput && btnFormat && btnDownload && formatStatusEl && outputEl) {
 
       const data = await res.json();
 
-      outputEl.value = data.result ?? "";
-      downloadedFilename = data.outputFilename ?? "formatted.txt";
-      btnDownload.disabled = outputEl.value.length === 0;
+      outputEl.value = data.result || "";
+      downloadedFilename = data.outputFilename || "formatted.txt";
+      btnDownload.disabled = !outputEl.value;
 
       formatStatusEl.textContent = `Done. Route used: ${data.action}. Stored as ${data.originalBlobName} and ${data.formattedBlobName}. You can now download the formatted file.`;
     } catch (err) {
@@ -88,7 +87,7 @@ if (fileInput && btnFormat && btnDownload && formatStatusEl && outputEl) {
     const blob = new Blob([outputEl.value], {
       type: "text/plain;charset=utf-8"
     });
-
+    
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
