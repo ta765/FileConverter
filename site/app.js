@@ -22,12 +22,12 @@ if (fileInput && btnFormat && btnDownload && formatStatusEl && outputEl) {
     }
 
     const nameOk = selectedFile.name.toLowerCase();
-    const typeOk = nameOk.endsWith(".txt") || nameOk.endsWith(".xml");
+    const typeOk = nameOk.endsWith(".json") || nameOk.endsWith(".xml");
     const maxBytes = 200 * 1024;
 
     if (!typeOk) {
       btnFormat.disabled = true;
-      formatStatusEl.textContent = "Please select a plain text or .xml file.";
+      formatStatusEl.textContent = "Please select an .json or .xml file.";
       selectedFile = null;
       return;
     }

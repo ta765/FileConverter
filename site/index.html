@@ -33,18 +33,21 @@
   <section class="card">
     <h2>File Converter</h2>
 
-    <label for="fileInput">Upload a file</label><br />
-    <input id="fileInput" type="file" accept=".txt,text/plain,.xml" />
+    <p class="muted">
+        Upload a file you wish to convert then click "Convert".
+    </p>
 
-    <div style="margin-top: 12px;">
-        <button id="btnFormat" disabled>Format</button>
-        <button id="btnDownload" disabled>Download Formatted File</button>
-    </div>
+    <label for="fileInput">Upload a .xml or .json file</label><br />
+    <input id="fileInput" type="file" accept=".xml,.json" />
+
+    <button id="btnFormat" disabled style="margin-top: 12px;">Convert</button>
 
     <p id="formatStatus" style="margin-top: 12px;"></p>
 
-    <h3>Output</h3>
+    <h3>Preview</h3>
     <textarea id="output" rows="10" style="width: 100%;" readonly></textarea>
+
+    <button id="btnDownload" disabled style="margin-top: 12px;">Download</button>
 </section>
 
   <script src="app.js"></script>

@@ -10,8 +10,7 @@ type Body = {
 function detectAction(filename: string): FormatterAction | null {
   const lower = filename.toLowerCase();
   if (lower.endsWith(".xml")) return "xml2json";
-  if (lower.includes("_uppercase.txt")) return "uppercase";
-  if (lower.includes("_sentencecase.txt")) return "sentencecase";
+  if (lower.endsWith(".json")) return "json2xml";
   return null;
 }
 
@@ -19,8 +18,7 @@ function buildOutputFilename(filename: string, action: FormatterAction): string 
   if (action === "xml2json") {
     return filename.replace(/\.xml$/i, ".json");
   }
-
-  return filename.replace(/\.txt$/i, "_formatted.txt");
+  return filename.replace(/\.json$/i, ".xml");
 }
 
 function sanitiseFilename(filename: string): string {
@@ -77,7 +75,7 @@ export async function format(
       return {
         status: 400,
         jsonBody: {
-          error: "Could not determine formatter from filename. Use names like notes_uppercase.txt or notes_sentencecase.txt."
+          error: "Could not determine file type. Please upload an .xml or .json file."
         }
       };
     }

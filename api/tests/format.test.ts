@@ -41,4 +41,11 @@ describe("format handler validation", () => {
         expect(res.status).toBe(500);
         expect((res.jsonBody as any).error).toContain("FILES_STORAGE");
     });
+
+    it("routes .json files past validation to storage step", async () => {
+        const json = JSON.stringify({ root: { item: "test" } });
+        const res = await format(makeRequest({ filename: "data.json", text: json }), ctx);
+        expect(res.status).toBe(500);
+        expect((res.jsonBody as any).error).toContain("FILES_STORAGE");
+    });
 });
