@@ -1,5 +1,43 @@
 import Papa from "papaparse";
 
+function flattenRowForCsv(row: Record<string, unknown>): Record<string, string> {
+  const out: Record<string, string> = {};
+
+  function walk(prefix: string, val: unknown): void {
+    if (val === null || val === undefined) {
+      if (prefix) out[prefix] = "";
+      return;
+    }
+    if (Array.isArray(val)) {
+      out[prefix || "value"] = JSON.stringify(val);
+      return;
+    }
+    if (typeof val === "object") {
+      const o = val as Record<string, unknown>;
+      const keys = Object.keys(o);
+      if (keys.length === 0) {
+        if (prefix) out[prefix] = "{}";
+        return;
+      }
+      for (const k of keys) {
+        const key = prefix ? `${prefix}.${k}` : k;
+        walk(key, o[k]);
+      }
+      return;
+    }
+    out[prefix || "value"] = String(val);
+  }
+
+  walk("", row);
+  return out;
+}
+
+export function valueToCsv(data: unknown): string {
+  const rows = rowsForCsv(data);
+  const flatRows = rows.map((r) => flattenRowForCsv(r));
+  return Papa.unparse(flatRows);
+}
+
 function rowsForCsv(parsed: unknown): Record<string, unknown>[] {
   if (Array.isArray(parsed)) {
     return parsed.length === 0 ? [] : (parsed as Record<string, unknown>[]);
@@ -30,7 +68,5 @@ function rowsForCsv(parsed: unknown): Record<string, unknown>[] {
 }
 
 export function json2csv(input: string): string {
-  const parsed = JSON.parse(input);
-  const rows = rowsForCsv(parsed);
-  return Papa.unparse(rows);
+  return valueToCsv(JSON.parse(input));
 }
