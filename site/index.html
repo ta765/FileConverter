@@ -1,55 +1,103 @@
 <!doctype html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>File Converter</title>
   <style>
     body {
-      font-family: system-ui, Arial, sans-serif;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       max-width: 720px;
       margin: 40px auto;
       padding: 0 16px;
     }
-
-    button {
-      padding: 10px 14px;
-      font-size: 16px;
-      cursor: pointer;
+    h1 {
+      text-align: center;
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 0 0 0.35rem 0;
     }
-
-    .muted {
-      color: #666;
-      font-size: 14px;
+    .card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 0.75rem 0 0.35rem;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+    .muted { text-align: center; color: #666; font-size: 0.95rem; }
+    label { display: block; margin-top: 10px; }
+    label[for="fileInput"] { margin-bottom: 2px; }
+    input#fileInput {
+      width: 100%;
+      font-size: 0.9rem;
+      margin: 0 0 2px 0;
+    }
+    input#fileInput::file-selector-button,
+    input#fileInput::-webkit-file-upload-button {
+      padding: 6px 12px;
+      font: inherit;
+      font-size: 0.88rem;
+      border-radius: 8px;
+      border: 1px solid #8b1515;
+      background: #c62828;
+      color: #fff;
+      cursor: pointer;
+      margin-right: 8px;
+    }
+    label[for="targetSelect"] { margin-top: 6px; }
+    #targetSelect {
+      width: 17%;
+      margin: 0.3rem 0 0.4rem;
+      padding: 12px 14px;
+      min-height: 48px;
+      border-radius: 10px;
+      font-size: 1rem;
+      border: 2px solid #c62828;
+      background: #fff;
+      color: #222;
+    }
+    button {
+      width: 100%;
       margin-top: 10px;
+      padding: 14px 20px;
+      font-size: 1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      background: #c62828;
+      color: #fff;
+      border: 1px solid #8b1515;
+    }
+    button:disabled { cursor: not-allowed; opacity: 0.5; }
+    #formatStatus { margin-top: 10px; min-height: 1.2em; }
+    #output {
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 10px;
+      padding: 8px;
+      border: 1px solid #ccc;
     }
   </style>
 </head>
 
 <body>
   <h1>File Converter</h1>
-
   <section class="card">
-    <h2>File Converter</h2>
-
     <p class="muted">
         Upload a file you wish to convert then click "Convert".
     </p>
-
-    <label for="fileInput">Upload a .xml or .json file</label><br />
-    <input id="fileInput" type="file" accept=".xml,.json" />
-
-    <button id="btnFormat" disabled style="margin-top: 12px;">Convert</button>
-
-    <p id="formatStatus" style="margin-top: 12px;"></p>
-
+    <label for="fileInput">Upload a file</label>
+    <input id="fileInput" type="file" accept=".xml,.json,.csv" />
+    <label for="targetSelect">Convert to</label>
+    <select id="targetSelect" disabled></select>
+    <button type="button" id="btnFormat" disabled>Convert</button>
+    <p id="formatStatus"></p>
     <h3>Preview</h3>
-    <textarea id="output" rows="10" style="width: 100%;" readonly></textarea>
-
-    <button id="btnDownload" disabled style="margin-top: 12px;">Download</button>
-</section>
-
+    <textarea id="output" rows="10" readonly></textarea>
+    <button type="button" id="btnDownload" disabled>Download</button>
+  </section>
   <script src="app.js"></script>
 </body>
 </html>

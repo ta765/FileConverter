@@ -15,10 +15,12 @@
   "dependencies": {
     "@azure/functions": "^4.0.0",
     "@azure/storage-blob": "^12.31.0",
-    "fast-xml-parser": "^5.5.11"
+    "fast-xml-parser": "^5.5.11",
+    "papaparse": "^5.5.3"
   },
   "devDependencies": {
     "@types/node": "18.x",
+    "@types/papaparse": "^5.5.2",
     "azure-functions-core-tools": "^4.x",
     "rimraf": "^5.0.0",
     "typescript": "^5.9.3",
